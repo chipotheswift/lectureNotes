@@ -1,0 +1,174 @@
+Milestone 3 due Friday
+
+--> be sure it builds!
+
+///////////////////////////////
+
+Continue with inheritance.
+
+Corgi extends Dog extends Animal
+
+
+Corgi c = new Corgi();
+
+
+See example: Students
+
+
+////////////////////////
+
+See example: Shirts
+
+- what is there in common?
+
+- how to refactor?
+
+////////////////////////
+
+Milestone 3: refactoring your menu items
+
+- IMenuItem interface
+
+- IngredientType enum/IngredientItem class
+    ingredient + name + calories + unit cost 
+        + included bool + default bool
+    --> why?
+    --> setting "default" bool (should have "init" instead of "set")
+    --> setting "included" bool
+    --> unit cost?
+
+
+
+
+//////////////////////////////
+
+- Entree (abstract) class implements IMenuItem
+    - Current bread choice, default bread type
+    - Size choice
+    - Collection of *possible* ingredients 
+        - List<IngredientItem> OR
+        - Dictionary<IngredientType, IngredientItem>
+
+        --> should hold JUST possible ingredients for this entree
+
+        protected List<IngredientItem> _possibleToppings = new();
+
+
+        --> how to initialize? 
+        public ClubSub() {
+            _possibleToppings.Add(new IngredientItem(IngredientType.Turkey) {Included = true, Default = true});
+            //etc.
+
+            Size = medium
+            Bread = hoagie
+            default bread = hoagie
+        }
+
+
+
+
+
+    - How are calories found for ALL subs/wraps/sandwiches?
+
+       (calories in bread choice)+ (calories in all included ingredients)
+       scaled by size
+
+        should not need to override Calories anywhere
+
+
+
+    - General way to get preparation information
+        --> how to do "Add ..." or "Hold ..."?
+            look at _possibleToppings
+            if an item is included but default is false: "Add .."
+            if an item is not included but default is true: "Hold..."
+
+
+
+        --> how to do "Use ... Bread"?
+            compare default bread to current bread
+
+
+
+
+    - General way to define price? price for all is first 
+        calculated for a med., then scaled on size
+        --> could have a protected MediumPrice property 
+            that you override in each type
+        --> then Entree's Price property could...?
+                scale based on size using MediumPrice
+
+        --> would you need to override Price? no
+
+
+        (if you want to make price abstract and override 
+            in each specific case, that's OK too)
+
+
+
+    - what can Entree do with the bread choice / 
+    size choice requirements?
+
+    do all the implementation (don't need them in children)
+
+/////////////////////////////////////
+
+- new: CustomSandwich class (extends Entree)
+    --> default bread is wheat, size is med
+    --> ALL ingredients are possible 
+        (but none are included by default)
+
+    loop through an enumeration
+        add an IngredientItem for each one (included/default both false)
+
+    --> how to find price of a medium?
+        $5.99 + unit cost for all included ingredients
+
+
+
+- All specialty Sandwich/Sub/Wrap classes extend Entree
+    - add a constructor 
+    --> Current bread = ? (where to initialize?) constructor 
+    --> Default bread = ? (where to initialize?)  constructor
+    --> Ingredients = ? (where to initialize?) constructor
+
+    --> do we override Price, Calories, or PreparationInformation?  
+    --> what happens to the size/bread choice properties?
+    --> what happens to all the bool ingredients?
+
+Calories/PreparationInformation/Size/Bread
+Price - depends on your implementation
+
+
+
+- Drink, Side are abstract, implement IMenuItem
+    - Collect together shared info from drinks and sides
+    - Make all drinks extend Drink, all sides extend Side
+    - Identify common implementations - for all drinks, 
+        we find cals/price for a medium 
+        (and do this differently for different drinks) and then
+        scale based on size
+
+        --> how could we pull out the common code?
+
+
+    (again, you *can* make Price/Calories abstract and 
+    individually override)
+
+
+
+
+- Sides have fewer overlapping features
+    --> why even have a Side abstract class?
+
+
+
+
+- Combo implements IMenuItem
+    - EntreeChoice/SideChoice/DrinkChoice
+    - defaults?
+    - calories? (add up the parts)
+    - price? (sum of the prices with 20% discount)
+
+///////////////////////
+
